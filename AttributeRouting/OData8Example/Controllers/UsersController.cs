@@ -13,13 +13,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ODataExample.Data.Repositories;
 using ODataExample.Models;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.AspNetCore.OData.Routing.Attributes;
 
 namespace ODataExample.Controllers
 {
-    /*[Route("api")]
-    [ApiController]
     [Authorize]
-    public class UsersController : ControllerBase
+    public class UsersController : ODataController
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -30,35 +30,42 @@ namespace ODataExample.Controllers
             _mapper = mapper;
         }
 
-        [Route("accounts/{accountId}/users")]
-        public IActionResult GetByAccount(Guid accountId, ODataQueryOptions<User> options)
+        [HttpGet]
+        [ODataRoute("Accounts({key})/Users")]
+        public IActionResult UsersByAccount(Guid key, ODataQueryOptions<User> options)
         {
             var groupName = User.Claims.First(c => c.Type == "api.group").Value;
 
             var query =
-                from u in _userRepository.GetUsersByAccount(accountId)
+                from u in _userRepository.GetUsersByAccount(key)
                 where u.GroupName == groupName
                 select u;
 
             var finalQuery = options.ApplyTo(query.ProjectTo<User>(_mapper.ConfigurationProvider)) as IQueryable<dynamic>;
-
-            var odata = HttpContext.ODataFeature();
-            return Ok(new PageResult<dynamic>(finalQuery, odata.NextLink, odata.TotalCount));
+            return Ok(finalQuery);
         }
 
-        [Route("accounts/{accountId}/users/{userId}")]
-        public async Task<IActionResult> GetById(Guid accountId, Guid userId, ODataQueryOptions<User> options)
+        public IActionResult Get(ODataQueryOptions<User> options)
         {
             var groupName = User.Claims.First(c => c.Type == "api.group").Value;
 
-            var query =
-                from u in _userRepository.GetUsersByAccount(accountId)
-                where u.GroupName == groupName && u.Id == userId
-                select u;
+            var countOnly = options.Count?.Value == true && options.RawValues.Count == null;
+
+            var query = _userRepository.Get().Where(u => u.GroupName == groupName);
+            var finalQuery = options.ApplyTo(query.ProjectTo<User>(_mapper.ConfigurationProvider)) as IQueryable<dynamic>;
+            return Ok(countOnly ? finalQuery.Count() : finalQuery);
+        }
+
+        public async Task<IActionResult> Get(Guid key, ODataQueryOptions<User> options)
+        {
+            var groupName = User.Claims.First(c => c.Type == "api.group").Value;
+
+            var query = _userRepository.Get().Where(x => x.Id == key && x.GroupName == groupName);
 
             var finalQuery = options.ApplyTo(query.ProjectTo<User>(_mapper.ConfigurationProvider)) as IQueryable<dynamic>;
-            var item = await finalQuery.FirstOrDefaultAsync();
-            return (item == null) ? NotFound() : Ok(item);
+            var x = await finalQuery.ToArrayAsync();
+            var item = x.FirstOrDefault();
+            return item == null ? NotFound() : Ok(item);
         }
-    }*/
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,6 +23,6 @@ namespace ODataExample.Data.EdmModels
         [StringLength(80)]
         public string InternalField { get; set; }
 
-        public virtual ICollection<UserEdm> Users { get; set; }
+        public virtual ICollection<UserEdm> Users { get; set; } = new Collection<UserEdm>();
     }
 }

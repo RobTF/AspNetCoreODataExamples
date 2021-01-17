@@ -15,6 +15,8 @@ namespace ODataExample.Data.Repositories
             _dbContext = dbContext;
         }
 
+        public IQueryable<UserEdm> Get() => _dbContext.Users;
+
         public IQueryable<UserEdm> GetUsersByAccount(Guid accountId) =>
             _dbContext.Users.Where(u => u.AccountId == accountId);
     }

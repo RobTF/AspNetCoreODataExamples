@@ -47,13 +47,14 @@ namespace ODataExample.Controllers
         public async Task<IActionResult> Get(Guid key, ODataQueryOptions<Account> options)
         {
             var query = _accountRepository.Get().Where(x => x.Id == key);
+
             var finalQuery = options.ApplyTo(query.ProjectTo<Account>(_mapper.ConfigurationProvider)) as IQueryable<dynamic>;
-            var item = await finalQuery.FirstOrDefaultAsync();
+            var x = await finalQuery.ToArrayAsync();
+            var item = x.FirstOrDefault(); // await finalQuery.FirstOrDefaultAsync();
             return item == null ? NotFound() : Ok(item);
         }
 
         [HttpGet]
-        [ODataRoute("Accounts/{key}/SomethingElse()", prefix: "")]
         public IActionResult GetUsers(Guid key, ODataQueryOptions<User> options)
         {
             var groupName = User.Claims.First(c => c.Type == "api.group").Value;

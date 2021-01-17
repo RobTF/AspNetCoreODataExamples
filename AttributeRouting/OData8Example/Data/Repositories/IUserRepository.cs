@@ -8,6 +8,8 @@ namespace ODataExample.Data.Repositories
 {
     public interface IUserRepository
     {
+        IQueryable<UserEdm> Get();
+
         IQueryable<UserEdm> GetUsersByAccount(Guid accountId);
     }
 }
