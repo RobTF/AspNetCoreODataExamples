@@ -37,7 +37,7 @@ namespace OData8ExampleTests
 
             var str = await resp.Content.ReadAsStringAsync();
 
-            Assert.AreEqual(@"{""@odata.context"":""http://localhost/$metadata#Collection(ODataExample.Models.User)"",""value"":[{""name"":""User 4""},{""name"":""User 7""},{""name"":""User 8""}]}", str);
+            Assert.AreEqual(@"{""@odata.context"":""http://localhost/$metadata#Users(name)"",""value"":[{""name"":""User 4""},{""name"":""User 7""},{""name"":""User 8""}]}", str);
         }
 
         [TestMethod]
@@ -59,6 +59,8 @@ namespace OData8ExampleTests
 
             var resp = await client.GetAsync("accounts/1c82f39e-462e-4e76-ac84-7fb9ca4827b9/GetUsers()?$select=name");
             resp.EnsureSuccessStatusCode();
+
+            var str = await resp.Content.ReadAsStringAsync();
         }
     }
 }

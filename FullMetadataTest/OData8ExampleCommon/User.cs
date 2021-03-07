@@ -1,17 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.OData.Client;
 
-namespace ODataExample.Models
+namespace ODataExampleCommon
 {
+    [Key("id")]
     public class User
     {
+        [OriginalName("id")]
         public Guid Id { get; set; }
 
+        [OriginalName("name")]
         public string Name { get; set; }
 
+        [OriginalName("groupName")]
         public string GroupName { get; set; }
     }
 }
