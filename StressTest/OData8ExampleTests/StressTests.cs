@@ -29,11 +29,8 @@ namespace OData8ExampleTests
         [TestMethod]
         public async Task Should_Deal_With_High_Volume_Of_Calls()
         {
-            var client = Factory.CreateClient();
-            client.DefaultRequestHeaders.Add("Accept", "application/json;odata.metadata=minimal");
-
             var tasks = new List<Task>();
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 150; i++)
             {
                 tasks.Add(GetData());
             }
